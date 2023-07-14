@@ -39,6 +39,7 @@ bower_components
 build/Release
 
 # Dependency directories
+server/node_modules
 node_modules/
 jspm_packages/
 
@@ -127,4 +128,8 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .yarn/install-state.gz
+<<<<<<< HEAD
 .pnp.*
+=======
+.pnp.*
+>>>>>>> cbeda4d (first commit)
