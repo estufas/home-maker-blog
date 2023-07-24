@@ -3,8 +3,8 @@ const cors = require('cors');
 const app = express();
 // var env = require('node-env-file');
 require('custom-env').env();
-const { client, models } = require('./db');
-const { UserSchema } = models;
+const { client } = require('./db');
+const User = require('./db/models/User');
 
 app.use(cors());
 app.use(express.json());
@@ -24,10 +24,16 @@ async function run() {
 
 run().catch(console.dir);
 
-app.get('/register', (req, res) => {
-    const { password, email } = req.body;
-    res.json({requestData: {password, email}})
-    console.log(UserSchema)
+app.get('/register', async (req, res) => {
+    const data = req.body;
+    console.log(data);
+    const newUser = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    });
+    // models.User.create(req.body);
+    res.json(newUser)
 })
 
 app.listen(4000);
