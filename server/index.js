@@ -25,15 +25,18 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/register', async (req, res) => {
-    const data = req.body;
-    console.log(data);
-    const newUser = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-    });
-    // models.User.create(req.body);
-    res.json(newUser)
+  	try {
+		const data = req.body;
+		const newUser = await User.create({
+			username: req.body.username,
+			email: req.body.email,
+			password: req.body.password
+		});
+		// models.User.create(req.body);
+		res.json(newUser)
+	} catch (err) {
+		console.log(err);
+	}
 })
 
 app.listen(4000);
