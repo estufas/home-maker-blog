@@ -3,40 +3,56 @@ const cors = require('cors');
 const app = express();
 // var env = require('node-env-file');
 require('custom-env').env();
-const { client } = require('./db');
+// const { client } = require('./db');
 const User = require('./db/models/User');
+const { uri } = require('./db');
+const mongoose = require("mongoose");
+const { connection } = require('mongoose');
+const bcrypt = require('bcryptjs');
+// const salt = "rGo}K+,k|5Qa!_@^t K[5}>@(S;2btG?[xJ`%$:g3J&O9z[rGo%*|Z>!u<.Ih!Fb"
+const salt = bcrypt.genSaltSync(10);
 
 app.use(cors());
 app.use(express.json());
 
-async function run() {
-    try {
-      // Connect the client to the server	(optional starting in v4.7)
-      await client.connect();
-      // Send a ping to confirm a successful connection
-      await client.db("admin").command({ ping: 1 });
-      console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-      // Ensures that the client will close when you finish/error
-      await client.close();
-    }
-}
-
-run().catch(console.dir);
+const start = async () => {
+	try {
+		await mongoose.connect(
+			uri
+		);
+		app.listen(4000, () => console.log("Server started on port 4000"));
+	} catch (error) {
+		console.error(error);
+		process.exit(1);
+	}
+};
+start().catch(console.dir);
 
 app.get('/register', async (req, res) => {
   	try {
-		const data = req.body;
 		const newUser = await User.create({
 			username: req.body.username,
 			email: req.body.email,
-			password: req.body.password
+			password: bcrypt.hashSync(req.body.password, salt)
 		});
-		// models.User.create(req.body);
 		res.json(newUser)
 	} catch (err) {
-		console.log(err);
+		res.status(500).send({message: "failed"})
 	}
 })
 
-app.listen(4000);
+app.get('/login', async (req, res) => {
+	try {
+	  const { email, password } = req.body;
+	  const user = await User.findOne({
+		  email
+	  });
+	  const validated = await bcrypt.compare(password, user.password);
+	  res.status(200).send(user);
+	  
+  } catch (err) {
+	  res.status(500).send({message: "failed"})
+  }
+})
+
+// app.listen(4000);
