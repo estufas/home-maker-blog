@@ -6,6 +6,11 @@ const PostSchema = new Schema({
         type: String,
         required: true,
         min: 4
+    },
+    body:{
+        type: String,
+        required: true,
+        min: 100
     }
 });
 

@@ -41,6 +41,18 @@ app.get('/register', async (req, res) => {
 	}
 })
 
+app.post('/new-post', async (req, res) => {
+	try {
+	  const newPost = await Post.create({
+		  name: req.body.name,
+		  body: req.body.body,
+	  });
+	  res.json(newPost)
+  } catch (err) {
+	  res.status(500).send({message: "failed"})
+  }
+})
+
 app.get('/login', async (req, res) => {
 	try {
 	  const { email, password } = req.body;
